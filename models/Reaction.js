@@ -1,5 +1,6 @@
-const { Schema } = require('mongoose');
+const { Schema, Types } = require('mongoose');
 
+console.log(3);
 const reactionSchema = new Schema(
     {
         reactionId: {
@@ -10,7 +11,7 @@ const reactionSchema = new Schema(
             type: String,
             required: true,
             minlength: 1,
-            maxLength: 280,
+            maxlength: 280,
         },
         username: {
             type: String,
