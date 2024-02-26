@@ -5,13 +5,8 @@ module.exports = {
     // Get all users
     async getUsers(req, res) {
         try {
-            const users = await User.find();
-
-            const userObj = {
-                users,
-            };
-
-            res.json(userObj);
+            const users = await User.find().populate('thoughts').populate('friends');
+            res.json(users);
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
@@ -46,11 +41,11 @@ module.exports = {
     // Update a user
     async updateUserByID(req, res) {
         try {
-            const update = req.body
-            const user = await User.findOneAndUpdate({ 
-                _id: req.params.userId,
+            const update = req.body;
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
                 update
-            });
+            );
 
   
             if (!user) {
@@ -88,14 +83,17 @@ module.exports = {
     // Add a friend to a user's friend list
     async addFriend(req, res) {
         console.log('You are adding a friend');
-        console.log(req.body);
 
         try {
-            const user = await User.findOneAndUpdate(
+            console.log(5);
+            let user = await User.findOne({ _id: req.params.userId })
+            console.log(4);
+            let friend = await User.findOne({ _id: req.params.friendId })
+            user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addToSet: { friends: req.body } },
-                { runValidators: true, new: true }
+                { $addToSet: { friends: friend } }
             );
+            console.log(6);
 
             if (!user) {
                 return res
@@ -113,9 +111,9 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: { friend: { friendId: req.params.friendId } } },
-                { runValidators: true, new: true }
+                { $pull: { friend: { _id: req.params.friendId } } }
             );
+            console.log(user.friendCount);
 
             if (!user) {
                 return res
