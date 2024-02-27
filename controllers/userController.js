@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongoose').Types;
+const { Types } = require('mongoose');
 const { User, Thought } = require('../models');
 
 module.exports = {
@@ -67,10 +67,8 @@ module.exports = {
                 return res.status(404).json({ message: 'User not found' });
             }
 
-            const thought = await Thought.updateMany(
-                { },
-                { $pull: { username: user.username } },
-                { new: true }
+            const thought = await Thought.deleteMany(
+                { username: user.username }
             );
 
             res.json({ message: 'User successfully deleted' });
@@ -82,18 +80,15 @@ module.exports = {
 
     // Add a friend to a user's friend list
     async addFriend(req, res) {
-        console.log('You are adding a friend');
 
         try {
-            console.log(5);
             let user = await User.findOne({ _id: req.params.userId })
-            console.log(4);
             let friend = await User.findOne({ _id: req.params.friendId })
             user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addToSet: { friends: friend } }
+                { $addToSet: { friends: friend } },
+                { new: true }
             );
-            console.log(6);
 
             if (!user) {
                 return res
@@ -111,9 +106,9 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: { friend: { _id: req.params.friendId } } }
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
             );
-            console.log(user.friendCount);
 
             if (!user) {
                 return res

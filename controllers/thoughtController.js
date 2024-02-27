@@ -1,3 +1,4 @@
+const { Types } = require('mongoose');
 const { Thought, User } = require('../models');
 
 module.exports = {
@@ -43,12 +44,13 @@ module.exports = {
     // Update a thought
     async updateThoughtByID(req, res) {
         try {
-            const update = req.body
+            const update = req.body;
+            console.log(req.body);
             const thought = await Thought.findOneAndUpdate({ 
                 _id: req.params.thoughtId,
                 update
             });
-
+            console.log(thought);
   
             if (!thought) {
                 return res.status(404).json({ message: 'Thought not found' });
@@ -100,12 +102,12 @@ module.exports = {
     // Remove a reaction from the thought
     async removeReaction(req, res) {
         try {
+            const newId = new Types.ObjectId(req.body.reactionId);
             const thought = await Thought.findOneAndUpdate(
                 { _id: req.params.thoughtId },
-                { $pull: { reaction: { reactionId: req.body.reactionId } } },
-                { runValidators: true, new: true }
+                { $pull: { reactions: { reactionId: newId } } },
             );
-
+            console.log(555);
             if (!thought) {
                 return res
                     .status(404)

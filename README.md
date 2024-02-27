@@ -8,7 +8,7 @@ The demonstrated model structure features users and the "thoughts" they can post
 Once the project has been downloaded, run `npm i` to install the required external packages, and then `node index.js` to start the server.
 
 ## Usage
-A demonstration video is provided: 
+A demonstration video is provided: https://app.screencastify.com/v3/watch/iDv5MQ7Wm9RxcN2OJ5Ch
 
 The API can be demonstrated in a client akin to Insomnia before integration to a frontend is required.
 

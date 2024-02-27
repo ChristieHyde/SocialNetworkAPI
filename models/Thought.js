@@ -1,8 +1,6 @@
 const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction.js');
 
-console.log(1);
-
 const thoughtSchema = new Schema(
     {
         thoughtText: {
@@ -31,8 +29,6 @@ const thoughtSchema = new Schema(
         id: false
     }
 );
-
-console.log(2);
 
 // Getter to format the date of creation
 function formatDate(date) {
