@@ -1,4 +1,4 @@
-const { Schema } = require('mongoose');
+const { Schema, Types } = require('mongoose');
 
 const reactionSchema = new Schema(
     {
@@ -10,7 +10,7 @@ const reactionSchema = new Schema(
             type: String,
             required: true,
             minlength: 1,
-            maxLength: 280,
+            maxlength: 280,
         },
         username: {
             type: String,

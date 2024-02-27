@@ -1,17 +1,12 @@
-const { ObjectId } = require('mongoose').Types;
+const { Types } = require('mongoose');
 const { User, Thought } = require('../models');
 
 module.exports = {
     // Get all users
     async getUsers(req, res) {
         try {
-            const users = await User.find();
-
-            const userObj = {
-                users,
-            };
-
-            res.json(userObj);
+            const users = await User.find().populate('thoughts').populate('friends');
+            res.json(users);
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
@@ -46,11 +41,11 @@ module.exports = {
     // Update a user
     async updateUserByID(req, res) {
         try {
-            const update = req.body
-            const user = await User.findOneAndUpdate({ 
-                _id: req.params.userId,
+            const update = req.body;
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
                 update
-            });
+            );
 
   
             if (!user) {
@@ -72,10 +67,8 @@ module.exports = {
                 return res.status(404).json({ message: 'User not found' });
             }
 
-            const thought = await Thought.updateMany(
-                { },
-                { $pull: { username: user.username } },
-                { new: true }
+            const thought = await Thought.deleteMany(
+                { username: user.username }
             );
 
             res.json({ message: 'User successfully deleted' });
@@ -87,14 +80,14 @@ module.exports = {
 
     // Add a friend to a user's friend list
     async addFriend(req, res) {
-        console.log('You are adding a friend');
-        console.log(req.body);
 
         try {
-            const user = await User.findOneAndUpdate(
+            let user = await User.findOne({ _id: req.params.userId })
+            let friend = await User.findOne({ _id: req.params.friendId })
+            user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addToSet: { friends: req.body } },
-                { runValidators: true, new: true }
+                { $addToSet: { friends: friend } },
+                { new: true }
             );
 
             if (!user) {
@@ -113,8 +106,8 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: { friend: { friendId: req.params.friendId } } },
-                { runValidators: true, new: true }
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
             );
 
             if (!user) {
